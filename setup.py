@@ -1,0 +1,58 @@
+# -*- coding: utf-8 -*-
+import logging
+import setuptools
+
+log = logging.getLogger(name=__name__)
+
+setuptools.setup(
+    name='grayskull',
+    version='0.0.1',
+    description='Agents trying to master the OpenAI universe',
+    url='https://github.com/fraglegs/grayskull',
+    author='Shayne Miel',
+    license='MIT',
+    packages=setuptools.find_packages(exclude=['tests*']),
+    install_requires=[
+        'atari-py',
+        'autobahn',
+        'backports.ssl-match-hostname',
+        'box2d-py',
+        'chainer',
+        'constantly',
+        'curses-menu',
+        'docker-py',
+        'docker-pycreds',
+        'fastzbarlight',
+        'filelock',
+        'funcsigs',
+        'go-vncdriver',
+        'gym',
+        'imageio',
+        'incremental',
+        'ipaddress',
+        'Keras',
+        'mock',
+        'mujoco-py',
+        'nose',
+        'numpy',
+        'opencv-python',
+        'pachi-py',
+        'pbr',
+        'Pillow',
+        'protobuf',
+        'pyglet',
+        'PyOpenGL',
+        'PyYAML',
+        'requests',
+        'scipy',
+        'six',
+        'tensorflow',
+        'Theano',
+        'Twisted',
+        'txaio',
+        'ujson',
+        'universe',
+        'websocket-client',
+        'zope.interface',
+    ]
+)

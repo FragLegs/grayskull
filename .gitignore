@@ -1,3 +1,4 @@
 .anaconda
 *.pyc
 starter*
+deps*
