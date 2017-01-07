@@ -13,9 +13,20 @@ class LinearAgent(grayskull.agents.base.Agent):
     def __init__(self,
                  action_space,
                  observation_space,
-                 learning_rate=0.1,
                  *args,
                  **kwargs):
+        """
+        A base agent for the OpenAI requests for research on CartPole.
+
+        Parameters
+        ----------
+        action_space : gym.spaces.Discrete
+            The possible actions
+        observation_space : numpy array like
+            The space of possible observations
+        *args, **kwargs
+            Passed on to super class
+        """
         super(LinearAgent, self).__init__(action_space, *args, **kwargs)
 
         # get the input size
@@ -36,7 +47,5 @@ class LinearAgent(grayskull.agents.base.Agent):
         -------
         an action from self.actions
         """
-        return self.actions[
-            0 if np.dot(self.model, observation.ravel()) < 0 else 1
-        ]
+        return 0 if np.dot(self.model, observation.ravel()) < 0 else 1
 

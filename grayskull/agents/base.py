@@ -29,9 +29,15 @@ class Agent(object):
         """
         raise NotImplementedError('Override me!')
 
-    def react(self, observation, action, reward, done, new_observation):
+    def react(self,
+              observation,
+              action,
+              reward,
+              done,
+              new_observation,
+              timed_out):
         """
-        Incorporate feedback from simulation
+        Incorporate feedback from simulation. By default, just ignore.
 
         Parameters
         ----------
@@ -47,8 +53,11 @@ class Agent(object):
             Whether this ends the episode
 
         new_observation : a game state (usually an image)
+
+        timed_out : bool
+            Whether this ends an episode because of timeout
         """
-        raise NotImplementedError('Override me!')
+        pass
 
     def save(self, path):
         """
@@ -61,21 +70,3 @@ class Agent(object):
         """
         with open(path, mode='w') as fout:
             pickle.dump(self, fout)
-
-    @classmethod
-    def load(path):
-        """
-        Load an Agent from a path
-
-        Parameters
-        ----------
-        path : str
-            Where to load the agent from
-
-        Returns
-        -------
-        Agent
-            The saved agent
-        """
-        with open(path, mode='r') as fin:
-            return pickle.load(fin)

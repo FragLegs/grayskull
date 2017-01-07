@@ -12,6 +12,14 @@ class Random(grayskull.agents.base.Agent):
     Chooses a random action at every step.
     """
     def __init__(self, *args, **kwargs):
+        """
+        Randomly guess an action and don't learn
+
+        Parameters
+        ----------
+        *args, **kwargs
+            Passed on to super class
+        """
         super(Random, self).__init__(*args, **kwargs)
 
     def act(self, observation):
@@ -27,24 +35,3 @@ class Random(grayskull.agents.base.Agent):
         an action from self.actions
         """
         return self.actions.sample()
-
-    def react(self, observation, action, reward, done, new_observation):
-        """
-        Incorporate feedback from simulation
-
-        Parameters
-        ----------
-        observation : a game state (usually an image)
-
-        action : int
-            The action that was taken
-
-        reward : int
-            The reward that was given
-
-        done : bool
-            Whether this ends the episode
-
-        new_observation : a game state (usually an image)
-        """
-        pass

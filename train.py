@@ -31,24 +31,32 @@ def main(game='CartPole-v0',
          monitor=False,
          **kwargs):
 
+    # set up the game and agent
     env = gym.make(game)
     agent_name = agent
     agent = AGENTS[agent_name](
         action_space=env.action_space,
         observation_space=env.observation_space,
-        **agent_args)
+        **agent_args
+    )
+
+    # determine the max number of steps per episode from the environment
+    max_steps = env.spec.tags.get('wrapper_config.TimeLimit.max_episode_steps')
 
     episode = 0
 
     # run many episodes
     while True:
+        # reset the environment
         observation = env.reset()
         done = False
 
+        # track the total reward
         total_reward = 0.0
+        step = 1
 
-        # run many steps
-        while not done:
+        # run steps until the episode is done or times out
+        while step <= max_steps and not done:
             if render:
                 env.render()
 
@@ -60,10 +68,19 @@ def main(game='CartPole-v0',
             total_reward += reward
 
             # learn from the action
-            agent.react(observation, action, reward, done, new_observation)
+            agent.react(
+                observation,
+                action,
+                reward,
+                done,
+                new_observation,
+                step == max_steps
+            )
 
             # make the new observation the current one
             observation = new_observation
+
+            step += 1
 
         log.info('Episode {}: {}'.format(episode, total_reward))
         episode += 1
