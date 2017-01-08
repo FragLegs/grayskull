@@ -11,7 +11,7 @@ log = logging.getLogger(name=__name__)
 
 class LinearGuessing(grayskull.agents.linear.base.LinearAgent):
     """
-    Generates 10000 random settings for a linear model's weights and
+    Generates 10000 random settings for a linear params's weights and
     choose the best (where "best" is defined as the configuration that
     leads to the highest per-episode reward).
     """
@@ -53,21 +53,21 @@ class LinearGuessing(grayskull.agents.linear.base.LinearAgent):
         Returns
         -------
         numpy array of floats (n_guesses, n_params)
-            `n_guesses` random guesses at model parameters, one per row
+            `n_guesses` random guesses at params parameters, one per row
         """
         # TODO: Work out appropriate distribution for the params
         return np.random.rand(n_guesses, self.n_params) * 2 - 1
 
     def set_weights(self, weights):
         """
-        Set the model weights
+        Set the params weights
 
         Parameters
         ----------
         weights : numpy array (n_params, )
             The weights to set
         """
-        self.model = weights
+        self.params = weights
 
     def react(self,
               observation,
@@ -107,10 +107,12 @@ class LinearGuessing(grayskull.agents.linear.base.LinearAgent):
         if self.episode >= self.n_guesses:
             best_episode = np.argmax(self.rewards)
             best_reward = self.rewards[best_episode]
-            best_weghts = self.weights[best_episode]
+            best_weights = self.weights[best_episode]
 
             log.info('Best weights gave reward {}.'.format(best_reward))
-            log.debug('Setting linear agent weights to {}'.format(best_weghts))
+            log.debug(
+                'Setting linear agent weights to {}'.format(best_weights)
+            )
 
             self.set_weights(self.weights[best_episode])
             sys.exit(0)

@@ -41,8 +41,8 @@ class LinearAgent(grayskull.agents.base.Agent):
         # get the input size
         self.n_params = np.prod(observation_space.shape)
 
-        # set up the model
-        self.model = np.zeros(self.n_params, dtype=np.float)
+        # set up the params
+        self.params = np.zeros(self.n_params, dtype=np.float)
 
     def act(self, observation):
         """
@@ -56,5 +56,5 @@ class LinearAgent(grayskull.agents.base.Agent):
         -------
         an action from self.actions
         """
-        return 0 if np.dot(self.model, observation.ravel()) < 0 else 1
+        return 0 if np.dot(self.params, observation.ravel()) < 0 else 1
 

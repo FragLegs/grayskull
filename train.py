@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import argparse
+import distutils.util
 import json
 import logging
 import os
@@ -26,6 +27,7 @@ def main(game='CartPole-v0',
          episodes=-1,
          render=False,
          monitor=False,
+         save=None,
          **kwargs):
     """
     Run the simulation
@@ -49,13 +51,18 @@ def main(game='CartPole-v0',
     monitor : bool, optional
         Whether to monitor performance with gym (not yet implemented)
         Default: False
+    save : bool, optional
+        Whether to save the agent at the end. If None, the script will ask.
+        Default: None
     **kwargs : keyword args
         Ignored
     """
     # create a folder for saving the agent and checkpoints
     date = time.strftime('%y-%m-%d-%H-%M-%S', time.localtime())
     results_path = os.path.join('results', agent, game, date)
-    os.makedirs(results_path)
+
+    if save is True:
+        os.makedirs(results_path)
 
     # set up the game and agent
     env = gym.make(game)
@@ -120,8 +127,12 @@ def main(game='CartPole-v0',
     except KeyboardInterrupt:
         log.error('Canceled by user!')
     finally:
-        yn = raw_input('Save agent? ')
-        if yn.lower() == 'y':
+        if save is None:
+            yn = raw_input('Save agent? ')
+            if yn.lower() == 'y':
+                save = True
+
+        if save:
             agent.save(os.path.join(results_path, 'final.pkl'))
 
 
@@ -190,13 +201,22 @@ def parse_args():
         help=monitor_help
     )
 
-    seed_help = ('Set the random seed')
+    seed_help = 'Set the random seed'
     parser.add_argument(
         '--seed',
         type=int,
         default=None,
         help=seed_help
     )
+
+    save_help = 'Whether to save the agent. If None, will ask at the end.'
+    parser.add_argument(
+        '--save',
+        type=distutils.util.strtobool,
+        default=None,
+        help=save_help
+    )
+
 
     verbosity_help = 'Verbosity level (default: %(default)s)'
     choices = [
