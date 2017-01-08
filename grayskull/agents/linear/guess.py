@@ -10,7 +10,7 @@ log = logging.getLogger(name=__name__)
 
 
 class LinearGuessing(grayskull.agents.linear.base.LinearAgent):
-    def __init__(self, n_guesses=10, *args, **kwargs):
+    def __init__(self, n_guesses=10000, *args, **kwargs):
         """
         Generate `n_guesses` random settings for the model's weights and
         choose the best (where "best" is defined as the configuration that
