@@ -10,12 +10,13 @@ log = logging.getLogger(name=__name__)
 
 
 class LinearGuessing(grayskull.agents.linear.base.LinearAgent):
+    """
+    Generates 10000 random settings for a linear model's weights and
+    choose the best (where "best" is defined as the configuration that
+    leads to the highest per-episode reward).
+    """
     def __init__(self, n_guesses=10000, *args, **kwargs):
         """
-        Generate `n_guesses` random settings for the model's weights and
-        choose the best (where "best" is defined as the configuration that
-        leads to the highest per-episode reward).
-
         Parameters
         ----------
         n_guesses : int, optional

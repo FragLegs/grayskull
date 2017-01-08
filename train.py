@@ -8,18 +8,11 @@ import time
 import gym
 # import universe
 
-import grayskull.agents.linear.guess
-import grayskull.agents.random
-
+from grayskull.agents.agents import AGENTS
 # import utils
 
 log = logging.getLogger(name=__name__)
 
-
-AGENTS = {
-    'random': grayskull.agents.random.Random,
-    'linear_guessing': grayskull.agents.linear.guess.LinearGuessing,
-}
 
 GAMES = [
     game for game in sorted(gym.envs.registry.env_specs.keys())
@@ -33,7 +26,31 @@ def main(game='CartPole-v0',
          render=False,
          monitor=False,
          **kwargs):
+    """
+    Run the simulation
 
+    Parameters
+    ----------
+    game : str, optional
+        The name of a gym or universe game to play
+        Default: CartPole-v0
+    agent : str, optional
+        The name of an agent to use
+        Default: random
+    agent_args : dict, optional
+        Additional arguments to pass to the agent
+    episodes : int, optional
+        How many episodes to run the simulation (or -1 for "forever")
+        Default: -1
+    render : bool, optional
+        Whether to draw the sim on screen
+        Default: False
+    monitor : bool, optional
+        Whether to monitor performance with gym (not yet implemented)
+        Default: False
+    **kwargs : keyword args
+        Ignored
+    """
     # create a folder for saving the agent and checkpoints
     date = time.strftime('%y-%m-%d-%H-%M-%S', time.localtime())
     results_path = os.path.join('results', agent, game, date)
@@ -109,7 +126,10 @@ def parse_args():
     argparse.Namespace
     """
     desc = 'Train an agent on a game'
-    parser = argparse.ArgumentParser(description=desc)
+    parser = argparse.ArgumentParser(
+        description=desc,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
 
     game_help = 'Which game to train on'
     parser.add_argument(
@@ -117,7 +137,8 @@ def parse_args():
         '--game',
         choices=GAMES,
         default='CartPole-v0',
-        help=game_help
+        help=game_help,
+        metavar='GAME'
     )
 
     agent_help = 'Which agent to use'
