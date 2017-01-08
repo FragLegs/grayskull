@@ -5,6 +5,8 @@ import sys
 import numpy as np
 
 import grayskull.agents.linear.base
+import grayskull.errors
+
 
 log = logging.getLogger(name=__name__)
 
@@ -117,6 +119,6 @@ class LinearGuessing(grayskull.agents.linear.base.LinearAgent):
             )
 
             self.set_weights(self.weights[best_episode])
-            sys.exit(0)
+            raise grayskull.errors.SolvedGame()
 
         self.set_weights(self.weights[self.episode])

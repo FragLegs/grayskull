@@ -5,6 +5,7 @@ import sys
 import numpy as np
 
 import grayskull.agents.linear.base
+import grayskull.errors
 
 
 log = logging.getLogger(name=__name__)
@@ -85,20 +86,21 @@ class LinearHill(grayskull.agents.linear.base.LinearAgent):
 
         self.episode += 1
 
-        if self.current_reward >= self.top_score:
-            log.info('Solved after {} episodes!'.format(self.episode))
-            log.debug('Best weights: {}'.format(self.params))
-            sys.exit(0)
-
         # check whether we've climbed the hill
         if self.current_reward >= self.best_reward:
             self.best_weights = self.params
             self.best_reward = self.current_reward
 
+        # check if we've solved the game
+        if self.current_reward >= self.top_score:
+            self.params = self.best_weights
+            log.debug('Best weights: {}'.format(self.params))
+            raise grayskull.errors.SolvedGame()
+
+        # reset and try new parameters
         self.current_reward = 0.0
 
         # adjust the parameters
         gradient = (np.random.rand(self.n_params) * 2 - 1) * self.learning_rate
 
         self.params = self.best_weights + gradient
-

@@ -11,3 +11,11 @@ class IncompatibleGameError(Exception):
     for that agent.
     """
     pass
+
+
+class SolvedGame(Exception):
+    """
+    Raised to indicate that the simulation is done because we've solved the
+    game
+    """
+    pass

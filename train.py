@@ -27,6 +27,7 @@ def main(game='CartPole-v0',
          episodes=-1,
          render=False,
          monitor=False,
+         seed=None,
          save=None,
          **kwargs):
     """
@@ -50,7 +51,10 @@ def main(game='CartPole-v0',
         Default: False
     monitor : bool, optional
         Whether to monitor performance with gym (not yet implemented)
-        Default: False
+        Default: False,
+    seed : int, optional
+        A seed for random number generation
+        Default: None
     save : bool, optional
         Whether to save the agent at the end. If None, the script will ask.
         Default: None
@@ -64,8 +68,15 @@ def main(game='CartPole-v0',
     if save is True:
         os.makedirs(results_path)
 
-    # set up the game and agent
+    # set up the game
     env = gym.make(game)
+
+    if seed is not None:
+        random.seed(seed)
+        np.random.seed(seed)
+        env._seed(seed)
+
+    # set up the agent
     agent_name = agent
 
     try:
@@ -87,16 +98,20 @@ def main(game='CartPole-v0',
     try:
         # run many episodes
         while episodes == -1 or episode < episodes:
+            episode += 1
+
             # reset the environment
             observation = env.reset()
             done = False
 
             # track the total reward
             total_reward = 0.0
-            step = 1
+            step = 0
 
             # run steps until the episode is done or times out
-            while step <= max_steps and not done:
+            while step < max_steps and not done:
+                step += 1
+
                 if render:
                     env.render()
 
@@ -120,12 +135,11 @@ def main(game='CartPole-v0',
                 # make the new observation the current one
                 observation = new_observation
 
-                step += 1
-
             log.debug('Episode {}: {}'.format(episode, total_reward))
-            episode += 1
     except KeyboardInterrupt:
         log.error('Canceled by user!')
+    except grayskull.errors.SolvedGame:
+        log.info('Solved after {} episodes!'.format(episode))
     finally:
         if save is None:
             yn = raw_input('Save agent? ')
@@ -134,6 +148,8 @@ def main(game='CartPole-v0',
 
         if save:
             agent.save(os.path.join(results_path, 'final.pkl'))
+
+    return agent
 
 
 def parse_args():
