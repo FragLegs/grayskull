@@ -2,6 +2,8 @@
 import argparse
 import json
 import logging
+import os
+import time
 
 import gym
 # import universe
@@ -27,9 +29,15 @@ GAMES = [
 def main(game='CartPole-v0',
          agent='random',
          agent_args={},
+         episodes=-1,
          render=False,
          monitor=False,
          **kwargs):
+
+    # create a folder for saving the agent and checkpoints
+    date = time.strftime('%y-%m-%d-%H-%M-%S', time.localtime())
+    results_path = os.path.join('results', agent, game, date)
+    os.makedirs(results_path)
 
     # set up the game and agent
     env = gym.make(game)
@@ -37,6 +45,7 @@ def main(game='CartPole-v0',
     agent = AGENTS[agent_name](
         action_space=env.action_space,
         observation_space=env.observation_space,
+        results_path=results_path,
         **agent_args
     )
 
@@ -45,45 +54,50 @@ def main(game='CartPole-v0',
 
     episode = 0
 
-    # run many episodes
-    while True:
-        # reset the environment
-        observation = env.reset()
-        done = False
+    try:
+        # run many episodes
+        while episodes == -1 or episode < episodes:
+            # reset the environment
+            observation = env.reset()
+            done = False
 
-        # track the total reward
-        total_reward = 0.0
-        step = 1
+            # track the total reward
+            total_reward = 0.0
+            step = 1
 
-        # run steps until the episode is done or times out
-        while step <= max_steps and not done:
-            if render:
-                env.render()
+            # run steps until the episode is done or times out
+            while step <= max_steps and not done:
+                if render:
+                    env.render()
 
-            # choose an action
-            action = agent.act(observation)
+                # choose an action
+                action = agent.act(observation)
 
-            # take the action
-            new_observation, reward, done, _ = env.step(action)
-            total_reward += reward
+                # take the action
+                new_observation, reward, done, _ = env.step(action)
+                total_reward += reward
 
-            # learn from the action
-            agent.react(
-                observation,
-                action,
-                reward,
-                done,
-                new_observation,
-                step == max_steps
-            )
+                # learn from the action
+                agent.react(
+                    observation,
+                    action,
+                    reward,
+                    done,
+                    new_observation,
+                    step == max_steps
+                )
 
-            # make the new observation the current one
-            observation = new_observation
+                # make the new observation the current one
+                observation = new_observation
 
-            step += 1
+                step += 1
 
-        log.info('Episode {}: {}'.format(episode, total_reward))
-        episode += 1
+            log.info('Episode {}: {}'.format(episode, total_reward))
+            episode += 1
+    finally:
+        yn = raw_input('Save agent? ')
+        if yn.lower() == 'y':
+            agent.save(os.path.join(results_path, 'final.pkl'))
 
 
 def parse_args():
@@ -123,40 +137,53 @@ def parse_args():
         help=agent_args_help
     )
 
-    render_help = 'Whether to render the screen'
-    parser.add_argument('-r',
-                        '--render',
-                        action='store_true',
-                        help=render_help)
+    episodes_help = 'How many episodes to run (-1 means run forever)'
+    parser.add_argument(
+        '-e',
+        '--episodes',
+        type=int,
+        help=episodes_help,
+        default=-1
+    )
 
-    upload_help = 'Whether to upload'
-    parser.add_argument('-u',
-                        '--upload',
-                        action='store_true',
-                        help=upload_help)
+    render_help = 'Whether to render the screen'
+    parser.add_argument(
+        '-r',
+        '--render',
+        action='store_true',
+        help=render_help
+    )
 
     monitor_help = 'Record video and stats'
-    parser.add_argument('--monitor',
-                        action='store_true',
-                        help=monitor_help)
+    parser.add_argument(
+        '--monitor',
+        action='store_true',
+        help=monitor_help
+    )
 
     seed_help = ('Set the random seed')
-    parser.add_argument('--seed',
-                        type=int,
-                        default=None,
-                        help=seed_help)
+    parser.add_argument(
+        '--seed',
+        type=int,
+        default=None,
+        help=seed_help
+    )
 
     verbosity_help = 'Verbosity level (default: %(default)s)'
-    choices = [logging.getLevelName(logging.DEBUG),
-               logging.getLevelName(logging.INFO),
-               logging.getLevelName(logging.WARN),
-               logging.getLevelName(logging.ERROR)]
+    choices = [
+        logging.getLevelName(logging.DEBUG),
+        logging.getLevelName(logging.INFO),
+        logging.getLevelName(logging.WARN),
+        logging.getLevelName(logging.ERROR)
+    ]
 
-    parser.add_argument('-v',
-                        '--verbosity',
-                        choices=choices,
-                        help=verbosity_help,
-                        default=logging.getLevelName(logging.INFO))
+    parser.add_argument(
+        '-v',
+        '--verbosity',
+        choices=choices,
+        help=verbosity_help,
+        default=logging.getLevelName(logging.INFO)
+    )
 
     # Parse the command line arguments
     args = parser.parse_args()
