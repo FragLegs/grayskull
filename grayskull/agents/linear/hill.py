@@ -16,6 +16,8 @@ class LinearHill(grayskull.agents.linear.base.LinearAgent):
     to the parameters, and evaluate the new parameter configuration. If it
     performs better than the old configuration, discard the old configuration
     and accept the new one.
+
+    See: https://openai.com/requests-for-research/#cartpole
     """
     def __init__(self, learning_rate=0.5, top_score=200.0, *args, **kwargs):
         """

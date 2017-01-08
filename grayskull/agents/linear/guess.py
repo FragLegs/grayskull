@@ -14,6 +14,8 @@ class LinearGuessing(grayskull.agents.linear.base.LinearAgent):
     Generates 10000 random settings for a linear params's weights and
     choose the best (where "best" is defined as the configuration that
     leads to the highest per-episode reward).
+
+    See: https://openai.com/requests-for-research/#cartpole
     """
     def __init__(self, n_guesses=10000, *args, **kwargs):
         """

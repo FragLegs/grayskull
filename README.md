@@ -41,13 +41,25 @@ Available agents and their descriptions can be viewed by running `python agents.
 
     linear_guessing:
 
-        Generates 10000 random settings for a linear model's weights and
+        Generates 10000 random settings for a linear params's weights and
         choose the best (where "best" is defined as the configuration that
         leads to the highest per-episode reward).
+
+        See: https://openai.com/requests-for-research/#cartpole
+
+    linear_hill:
+
+        Start with a random setting of the parameters, add a small amount of noise
+        to the parameters, and evaluate the new parameter configuration. If it
+        performs better than the old configuration, discard the old configuration
+        and accept the new one.
+
+        See: https://openai.com/requests-for-research/#cartpole
 
     random:
 
         Chooses a random action at every step.
+
 
 ## Available Games
 
