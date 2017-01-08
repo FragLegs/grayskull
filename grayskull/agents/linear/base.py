@@ -5,6 +5,7 @@ import gym.spaces.discrete
 import numpy as np
 
 import grayskull.agents.base
+import grayskull.errors
 
 log = logging.getLogger(name=__name__)
 
@@ -28,6 +29,14 @@ class LinearAgent(grayskull.agents.base.Agent):
             Passed on to super class
         """
         super(LinearAgent, self).__init__(action_space, *args, **kwargs)
+
+        # if action space is more than 2 actions, these agents don't work
+        if not hasattr(action_space, 'n') or action_space.n > 2:
+            msg = (
+                'This agent only supports games with 2 possible actions (see '
+                'CartPole and Acrobot for examples of 2-action games)'
+            )
+            raise grayskull.errors.IncompatibleGameError(msg)
 
         # get the input size
         self.n_params = np.prod(observation_space.shape)

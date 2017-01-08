@@ -9,6 +9,7 @@ import gym
 # import universe
 
 from grayskull.agents.agents import AGENTS
+import grayskull.errors
 # import utils
 
 log = logging.getLogger(name=__name__)
@@ -59,12 +60,17 @@ def main(game='CartPole-v0',
     # set up the game and agent
     env = gym.make(game)
     agent_name = agent
-    agent = AGENTS[agent_name](
-        action_space=env.action_space,
-        observation_space=env.observation_space,
-        results_path=results_path,
-        **agent_args
-    )
+
+    try:
+        agent = AGENTS[agent_name](
+            action_space=env.action_space,
+            observation_space=env.observation_space,
+            results_path=results_path,
+            **agent_args
+        )
+    except grayskull.errors.IncompatibleGameError as e:
+        log.error(e)
+        return
 
     # determine the max number of steps per episode from the environment
     max_steps = env.spec.tags.get('wrapper_config.TimeLimit.max_episode_steps')
