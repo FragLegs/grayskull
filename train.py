@@ -109,7 +109,7 @@ def main(game='CartPole-v0',
 
                 step += 1
 
-            log.info('Episode {}: {}'.format(episode, total_reward))
+            log.debug('Episode {}: {}'.format(episode, total_reward))
             episode += 1
     finally:
         yn = raw_input('Save agent? ')
