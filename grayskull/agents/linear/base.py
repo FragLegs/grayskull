@@ -34,7 +34,7 @@ class LinearAgent(grayskull.agents.base.Agent):
         if not hasattr(action_space, 'n') or action_space.n > 2:
             msg = (
                 'This agent only supports games with 2 possible actions (see '
-                'CartPole and Acrobot for examples of 2-action games)'
+                'CartPole for an example of a 2-action game)'
             )
             raise grayskull.errors.IncompatibleGameError(msg)
 

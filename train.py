@@ -117,6 +117,8 @@ def main(game='CartPole-v0',
 
             log.debug('Episode {}: {}'.format(episode, total_reward))
             episode += 1
+    except KeyboardInterrupt:
+        log.error('Canceled by user!')
     finally:
         yn = raw_input('Save agent? ')
         if yn.lower() == 'y':
